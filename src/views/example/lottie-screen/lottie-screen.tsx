@@ -7,6 +7,8 @@ import { Screen } from "../../shared/screen"
 import { Wallpaper } from "../../shared/wallpaper"
 import { Header } from "../../shared/header"
 import { color, spacing } from "../../../theme"
+import LottieView from "lottie-react-native"
+
 
 const FULL: ViewStyle = { flex: 1 }
 const CONTAINER: ViewStyle = {
@@ -74,6 +76,9 @@ export interface LottieScreenScreenProps extends NavigationScreenProps<{}> {}
 
 export class LottieScreen extends React.Component<LottieScreenScreenProps, {}> {
 
+  animation = null
+  loadinganimation = null
+
   render() {
     return (
       <View style={FULL}>
@@ -95,9 +100,24 @@ export class LottieScreen extends React.Component<LottieScreenScreenProps, {}> {
             <Text style={TITLE_WRAPPER}>
               <Text style={ALMOST} text="Lottie" />
             </Text>
-            <Text style={CONTENT}>
-             Here will go all animations content
-            </Text>
+            <LottieView
+              style={{flex: 1, width: "100%" }}
+              ref={animation => {
+                this.animation = animation
+              }}
+              source={require("./precomp.json")}
+              autoPlay
+              loop
+            />
+             <LottieView
+              style={{flex: 1, width: "100%" }}
+              ref={animation => {
+                this.loadinganimation = animation
+              }}
+              source={require("./loading_animation.json")}
+              autoPlay
+              loop
+            />
           </Screen>
         </SafeAreaView>
       </View>

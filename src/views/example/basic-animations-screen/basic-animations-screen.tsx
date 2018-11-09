@@ -1,5 +1,5 @@
 import * as React from "react"
-import { View, Image, ViewStyle, TextStyle, ImageStyle, SafeAreaView, StatusBar } from "react-native"
+import { View, Image, ViewStyle, TextStyle, ImageStyle, SafeAreaView, StatusBar, Animated, TouchableOpacity, Easing } from "react-native"
 import { NavigationScreenProps } from "react-navigation"
 import { Text } from "../../shared/text"
 import { Button } from "../../shared/button"
@@ -74,12 +74,86 @@ const CONTINUE_TEXT: TextStyle = {
   letterSpacing: 2,
 }
 
+const CIRCLE: ViewStyle = {
+  width: 30,
+  height: 30,
+  borderRadius: 15,
+  backgroundColor: "red",
+}
+
 
 export interface BasicAnimationsScreenProps extends NavigationScreenProps<{}> {}
 
 export class BasicAnimations extends React.Component<BasicAnimationsScreenProps, {}> {
 
+  state = {
+    animatedValue: new Animated.Value(1),
+  }
+
+  startAnimation = () => {
+    Animated.sequence([
+      Animated.timing(this.state.animatedValue, {
+        toValue: 0,
+        duration: 1000,
+      }),
+      Animated.timing(this.state.animatedValue, {
+        toValue: 1000,
+        duration: 3000,
+      }),
+      Animated.timing(this.state.animatedValue, {
+        toValue: 1,
+        duration: 3000,
+      }),
+    ]).start()
+  }
   render() {
+    const centerCyrcleColorAnimation = {
+      backgroundColor: this.state.animatedValue.interpolate({
+        inputRange: [0, 1, 50, 100],
+        outputRange: ["#FF9900", "red", "blue", "yellow"],
+      }),
+    }
+
+    const centerCyrcleOpacityAnimation = {
+      opacity: this.state.animatedValue.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 1],
+      }),
+    }
+
+    const transformStyle = {
+      transform: [{
+        translateX: this.state.animatedValue.interpolate({
+          inputRange: [0, 1, 100],
+          outputRange: [100, 0, -100],
+          extrapolate: "clamp",
+        }),
+      }, {
+        translateY: this.state.animatedValue.interpolate({
+          inputRange: [0, 1, 100, 1000],
+          outputRange: [0, 0, -100, -400],
+          extrapolate: "clamp",
+        }),
+      }, {
+        scale: this.state.animatedValue.interpolate({
+          inputRange: [0, 1, 50, 100, 1000],
+          outputRange: [1, 1, 10, 1, 3],
+          extrapolate: "clamp",
+        }),
+      }],
+    }
+
+    const transformShape = {
+      transform: [{
+        skewX: this.state.animatedValue.interpolate({
+          inputRange: [0, 1, 100, 1000],
+          outputRange: ["45deg", "0deg", "-45deg", "120deg"],
+        }),
+      }],
+    }
+
+
+
     return (
       <View style={FULL}>
         <StatusBar barStyle="light-content" />
@@ -102,7 +176,11 @@ export class BasicAnimations extends React.Component<BasicAnimationsScreenProps,
             </Text>
             <Image source={bowserLogo} style={BOWSER} />
             <Text style={CONTENT}>
-             Here will go all animations content
+             <View style={[FULL, { width: "100%", flexDirection: "row", justifyContent: "space-around"}]}>
+              <TouchableOpacity onPress={this.startAnimation}><Animated.View style={[CIRCLE, transformShape]} /></TouchableOpacity>
+              <TouchableOpacity onPress={this.startAnimation}><Animated.View style={[CIRCLE, centerCyrcleOpacityAnimation, centerCyrcleColorAnimation]} /></TouchableOpacity>
+              <TouchableOpacity onPress={this.startAnimation}><Animated.View style={[CIRCLE, transformStyle, centerCyrcleColorAnimation]} /></TouchableOpacity>
+             </View>
             </Text>
           </Screen>
         </SafeAreaView>

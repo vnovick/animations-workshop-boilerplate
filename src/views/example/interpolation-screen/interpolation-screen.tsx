@@ -1,106 +1,108 @@
 import * as React from "react"
-import { View, Image, ViewStyle, TextStyle, ImageStyle, SafeAreaView, StatusBar } from "react-native"
-import { NavigationScreenProps } from "react-navigation"
-import { Text } from "../../shared/text"
-import { Button } from "../../shared/button"
-import { Screen } from "../../shared/screen"
-import { Wallpaper } from "../../shared/wallpaper"
-import { Header } from "../../shared/header"
-import { color, spacing } from "../../../theme"
+import { View, Text, Animated, ScrollView, StyleSheet, Image } from "react-native"
 
-const FULL: ViewStyle = { flex: 1 }
-const CONTAINER: ViewStyle = {
-  backgroundColor: color.transparent,
-  paddingHorizontal: spacing[4],
-}
-const TEXT: TextStyle = {
-  color: color.palette.white,
-  fontFamily: "Montserrat",
-}
-const BOLD: TextStyle = { fontWeight: "bold" }
-const HEADER: TextStyle = {
-  paddingTop: spacing[3],
-  paddingBottom: spacing[4] + spacing[1],
-  paddingHorizontal: 0,
-}
-const HEADER_TITLE: TextStyle = {
-  ...TEXT,
-  ...BOLD,
-  fontSize: 12,
-  lineHeight: 15,
-  textAlign: "center",
-  letterSpacing: 1.5,
-}
-const TITLE_WRAPPER: TextStyle = {
-  ...TEXT,
-  textAlign: "center",
-}
-const TITLE: TextStyle = {
-  ...TEXT,
-  ...BOLD,
-  fontSize: 28,
-  lineHeight: 38,
-  textAlign: "center",
-}
-const ALMOST: TextStyle = {
-  ...TEXT,
-  ...BOLD,
-  fontSize: 26,
-  fontStyle: "italic",
-}
+const HEADER_MAX_HEIGHT = 120
+const HEADER_MIN_HEIGHT = 70
+const PROFILE_IMAGE_MAX_HEIGHT = 80
+const PROFILE_IMAGE_MIN_HEIGHT = 40
 
-const CONTENT: TextStyle = {
-  ...TEXT,
-  color: "#BAB6C8",
-  fontSize: 15,
-  lineHeight: 22,
-  marginBottom: spacing[5],
-}
-const MENU: ViewStyle = {
-  paddingVertical: spacing[4],
-  paddingHorizontal: spacing[4],
-  alignSelf: "flex-start",
-  backgroundColor: "#5D2555",
-}
-const CONTINUE_TEXT: TextStyle = {
-  ...TEXT,
-  ...BOLD,
-  fontSize: 13,
-  letterSpacing: 2,
-}
+export class Interpolation extends React.Component<any> {
+
+    state = {
+      scrollY: new Animated.Value(0),
+    }
+    render() {
 
 
-export interface InterpolationScreenProps extends NavigationScreenProps<{}> {}
+        const headerHeight = this.state.scrollY.interpolate({
+            inputRange: [0, HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT],
+            outputRange: [HEADER_MAX_HEIGHT, HEADER_MIN_HEIGHT],
+            extrapolate: "clamp",
+        })
+        const profileImageHeight = this.state.scrollY.interpolate({
+            inputRange: [0, HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT],
+            outputRange: [PROFILE_IMAGE_MAX_HEIGHT, PROFILE_IMAGE_MIN_HEIGHT],
+            extrapolate: "clamp",
+        })
 
-export class Interpolation extends React.Component<InterpolationScreenProps, {}> {
+        const profileImageMarginTop = this.state.scrollY.interpolate({
+            inputRange: [0, HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT],
+            outputRange: [HEADER_MAX_HEIGHT - (PROFILE_IMAGE_MAX_HEIGHT / 2), HEADER_MAX_HEIGHT + 5],
+            extrapolate: "clamp",
+        })
+        const headerZindex = this.state.scrollY.interpolate({
+            inputRange: [0, HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT, 120],
+            outputRange: [0, 0, 1000],
+            extrapolate: "clamp",
+        })
 
-  render() {
-    return (
-      <View style={FULL}>
-        <StatusBar barStyle="light-content" />
-        <Wallpaper />
-        <Button
-          style={MENU}
-          textStyle={CONTINUE_TEXT}
-          text="Menu"
-          onPress={this.props.navigation.openDrawer}
-        />
-        <SafeAreaView style={FULL}>
-          <Screen style={CONTAINER} backgroundColor={color.transparent} preset="scrollStack">
-            <Header
-              headerText="Let's learn"
-              style={HEADER}
-              titleStyle={HEADER_TITLE}
-            />
-            <Text style={TITLE_WRAPPER}>
-              <Text style={ALMOST} text="Interpolation" />
-            </Text>
-            <Text style={CONTENT}>
-             Here will go all animations content
-            </Text>
-          </Screen>
-        </SafeAreaView>
-      </View>
-    )
-  }
+        const headerTitleBottom = this.state.scrollY.interpolate({
+            inputRange: [0, HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT,
+                HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT + 5 + PROFILE_IMAGE_MIN_HEIGHT,
+                HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT + 5 + PROFILE_IMAGE_MIN_HEIGHT
+                + 26
+            ],
+            outputRange: [-20, -20, -20, 0],
+            extrapolate: "clamp",
+        })
+
+
+
+
+        return (
+            <View style={{ flex: 1 }} >
+                <Animated.View style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    backgroundColor: "lightskyblue",
+                    height: headerHeight,
+                    zIndex: headerZindex,
+                    // elevation: headerZindex,//required for android
+                    alignItems: "center",
+                }}>
+
+                    <Animated.View style={{ position: "absolute", bottom: headerTitleBottom }}>
+                        <Text style={{ color: "white", fontSize: 14, fontWeight: "bold" }}>Vladimir Novick</Text>
+                    </Animated.View>
+                </Animated.View>
+
+                <ScrollView style={{ flex: 1 }}
+                    scrollEventThrottle={16}
+                    onScroll={Animated.event(
+                        [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }]
+                    )}
+                >
+                    <Animated.View style={{
+                        height: profileImageHeight,
+                        width: profileImageHeight,
+                        borderRadius: PROFILE_IMAGE_MAX_HEIGHT / 2,
+                        borderColor: "white",
+                        borderWidth: 3,
+                        overflow: "hidden",
+                        marginTop: profileImageMarginTop,
+                        marginLeft: 10,
+
+                    }}>
+                    <Image source={require('./avatar.png')}
+                      style={{ flex: 1, width: null, height: null }}
+                    />
+                    </Animated.View>
+                    <View><Text style={{ fontWeight: "bold", fontSize: 26, paddingLeft: 10 }}>Vladimir Novick</Text></View>
+
+                    <View style={{ height: 1000 }}></View>
+                </ScrollView>
+
+            </View >
+        )
+    }
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+})
