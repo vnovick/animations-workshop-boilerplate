@@ -11,7 +11,7 @@ class Screen1 extends React.Component<any> {
   render() {
     return (
       <View style={styles.container}>
-        <Transition shared="logo">
+        <Transition shared="logo" appear="flip">
           <LogoImage style={styles.largeLogo}/>
         </Transition>
         <Transition shared="welcome" disappear="bottom">
@@ -31,15 +31,17 @@ class Screen2 extends React.Component<any> {
   render() {
     return (
       <View style={styles.container}>
-        <Transition shared="logo" appear="scale">
+        <Transition shared="logo" appear="flip">
           <LogoImage style={styles.smallLogo}/>
         </Transition>
-        <Text style={styles.paragraph}>
-          <Text style={{fontWeight:"normal"}}>
-            Now you should have a basic understanding of how this app works.
-            Please sign up and take part in this fantastic user experience!
+        <Transition shared="logo" appear="scale">
+          <Text style={styles.paragraph}>
+            <Text style={{fontWeight:"normal"}}>
+              Now you should have a basic understanding of how this app works.
+              Please sign up and take part in this fantastic user experience!
+            </Text>
           </Text>
-        </Text>
+        </Transition>
         <Text style={styles.paragraph}>
             This is the last page of the onboarding.
         </Text>

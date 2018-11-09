@@ -42,7 +42,7 @@ export class Interpolation extends React.Component<any> {
                 HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT + 5 + PROFILE_IMAGE_MIN_HEIGHT
                 + 26
             ],
-            outputRange: [-20, -20, -20, 0],
+            outputRange: [-20, -20, 0, 20],
             extrapolate: "clamp",
         })
 
@@ -70,8 +70,15 @@ export class Interpolation extends React.Component<any> {
 
                 <ScrollView style={{ flex: 1 }}
                     scrollEventThrottle={16}
-                    onScroll={Animated.event(
-                        [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }]
+                    onScroll={
+                      Animated.event(
+                        [{
+                          nativeEvent: {
+                            contentOffset: {
+                              y: this.state.scrollY,
+                            }
+                          }
+                        }]
                     )}
                 >
                     <Animated.View style={{

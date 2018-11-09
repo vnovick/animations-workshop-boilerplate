@@ -1,5 +1,5 @@
 import * as React from "react"
-import { View, StyleSheet, ViewStyle, TextStyle, Animated, SafeAreaView, StatusBar, PanResponder } from "react-native"
+import { View, StyleSheet, ViewStyle, TextStyle, Animated, SafeAreaView, StatusBar, PanResponder, Dimensions } from "react-native"
 import { NavigationScreenProps } from "react-navigation"
 import { Text } from "../../shared/text"
 import { Button } from "../../shared/button"
@@ -31,7 +31,7 @@ const CONTINUE_TEXT: TextStyle = {
 
 
 
-const SWIPE_THRESHOLD = 120;
+const SWIPE_THRESHOLD = 120
 
 const profiles = [
   'https://lorempixel.com/300/400/',
@@ -80,7 +80,7 @@ export class GestureScreen extends React.Component<GestureScreenScreenProps, {}>
 
       onPanResponderRelease: (e, { vx, vy }) => {
         this.state.pan.flattenOffset()
-        if (Math.abs(this._value.x) > SWIPE_THRESHOLD) {
+        if (Math.abs(this._value.x) > Dimensions.get("window").width / 3) {
           Animated.decay(this.state.pan, {
             velocity: { x: vx, y: vy },
             deceleration: 0.98,
@@ -138,6 +138,7 @@ export class GestureScreen extends React.Component<GestureScreenScreenProps, {}>
     const nopeOpacity = pan.x.interpolate({
       inputRange: [-150, 0], outputRange: [1, 0]
     });
+
     const likeScale = pan.x.interpolate({ inputRange: [0, 150], outputRange: [0.5, 1], extrapolate: 'clamp' });
 
     const nopeScale = pan.x.interpolate({ inputRange: [-150, 0], outputRange: [1, 0.5], extrapolate: 'clamp' });
@@ -230,5 +231,5 @@ const styles = StyleSheet.create({
   },
   nopeText: {
     fontSize: 14,
-  }
-});
+  },
+})

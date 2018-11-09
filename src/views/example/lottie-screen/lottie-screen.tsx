@@ -1,5 +1,5 @@
 import * as React from "react"
-import { View, Image, ViewStyle, TextStyle, ImageStyle, SafeAreaView, StatusBar } from "react-native"
+import { View, Image, ViewStyle, TextStyle, TouchableOpacity, SafeAreaView, StatusBar } from "react-native"
 import { NavigationScreenProps } from "react-navigation"
 import { Text } from "../../shared/text"
 import { Button } from "../../shared/button"
@@ -106,18 +106,22 @@ export class LottieScreen extends React.Component<LottieScreenScreenProps, {}> {
                 this.animation = animation
               }}
               source={require("./precomp.json")}
-              autoPlay
-              loop
             />
-             <LottieView
-              style={{flex: 1, width: "100%" }}
-              ref={animation => {
-                this.loadinganimation = animation
-              }}
-              source={require("./loading_animation.json")}
-              autoPlay
-              loop
-            />
+             <TouchableOpacity onPress={() =>  {
+              setTimeout(() => {
+                this.animation.play()
+              }, 1000)
+                this.loadinganimation.play()
+              }
+            }>
+              <LottieView
+                style={{flex: 1, width: "100%" }}
+                ref={animation => {
+                  this.loadinganimation = animation
+                }}
+                source={require("./loading_animation.json")}
+              />
+             </TouchableOpacity>
           </Screen>
         </SafeAreaView>
       </View>
